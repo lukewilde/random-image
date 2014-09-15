@@ -1,6 +1,6 @@
 var sequenceGenerator = require('./random-sequence.js')
   , gm = require('gm').subClass({ imageMagick: true })
-  , filename = __dirname + '/images/third.png'
+  , filename = __dirname + '/images/grayscaled.png'
   , sequence = sequenceGenerator(1)
   , imageSize = 512
 
@@ -12,7 +12,6 @@ gm(imageSize, imageSize, '#ffffff')
     }
 
     drawColumn(0)
-
   }
 )
 
@@ -24,9 +23,7 @@ function drawColumn (column) {
     var color = Math.round(sequence.get() * 255)
       , colorString = 'rgb(' + color + ', ' + color + ', ' + color + ')'
 
-    graphic
-      .drawPoint(column, j)
-      .fill(colorString)
+    graphic.drawPoint(column, j).fill(colorString)
   }
 
   graphic.write(filename, function(error) {
