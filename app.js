@@ -1,8 +1,8 @@
 var sequenceGenerator = require('./random-sequence.js')
   , gm = require('gm').subClass({ imageMagick: true })
-  , filename = __dirname + '/images/first.png'
+  , filename = __dirname + '/images/second.png'
   , sequence = sequenceGenerator(1)
-  , imageSize = 256
+  , imageSize = 512
 
 gm(imageSize, imageSize, '#ffffff')
   .write(filename, function (err) {
@@ -11,31 +11,35 @@ gm(imageSize, imageSize, '#ffffff')
       console.log(err)
     }
 
-
-    var graphic = gm(filename)
-
-    for (var i = 0; i < imageSize; i++) {
-
-      for (var j = 0; j < imageSize; j++) {
-
-        var color = Math.round(sequence.get()) * 255
-          , colorString = 'rgb(' + color + ', ' + color + ', ' + color + ')'
-
-        graphic
-          .drawPoint(i, j)
-          .fill(colorString)
-      }
-
-      console.log(i)
-
-      graphic.write(filename, function(error) {
-        if (error) {
-          console.log(error)
-        } else {
-          console.log('wooo')
-        }
-      })
-    }
+    drawColumn(0)
 
   }
 )
+
+function drawColumn (column) {
+
+  var graphic = gm(filename)
+
+  for (var j = 0; j < imageSize; j++) {
+    var color = Math.round(sequence.get()) * 255
+      , colorString = 'rgb(' + color + ', ' + color + ', ' + color + ')'
+
+    graphic
+      .drawPoint(column, j)
+      .fill(colorString)
+  }
+
+  graphic.write(filename, function(error) {
+    if (error) {
+      console.log(error)
+    } else {
+        if (column > imageSize) {
+          console.log('woo')
+          return
+        } else {
+          console.log(column)
+          drawColumn(column + 1)
+        }
+    }
+  })
+}
