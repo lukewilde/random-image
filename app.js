@@ -1,19 +1,40 @@
-var sequence = require('./random-sequence.js')
+var sequenceGenerator = require('./random-sequence.js')
   , gm = require('gm').subClass({ imageMagick: true })
   , filename = __dirname + '/images/first.png'
+  , sequence = sequenceGenerator(1)
+  , imageSize = 256
 
-gm(512, 512, '#ffffff')
-  .write(filename, function (err, image) {
+gm(imageSize, imageSize, '#ffffff')
+  .write(filename, function (err) {
 
-    for (var i = 0, i < 512; i++) {
-      for (var j = 0, j < 512; j++) {
+    if (err) {
+      console.log(err)
+    }
 
-        var color = sequence.get() * 255
+
+    var graphic = gm(filename)
+
+    for (var i = 0; i < imageSize; i++) {
+
+      for (var j = 0; j < imageSize; j++) {
+
+        var color = Math.round(sequence.get()) * 255
           , colorString = 'rgb(' + color + ', ' + color + ', ' + color + ')'
 
-        gm(filename)
-          .drawPoint(i, j, colorString)
+        graphic
+          .drawPoint(i, j)
+          .fill(colorString)
       }
+
+      console.log(i)
+
+      graphic.write(filename, function(error) {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log('wooo')
+        }
+      })
     }
 
   }
