@@ -2,7 +2,7 @@ var Canvas = require('canvas')
   , fs = require('fs')
   , sequenceGenerator = require('./random-sequence.js')
 
-var out = fs.createWriteStream(__dirname + '/images/origional.png')
+var out = fs.createWriteStream(__dirname + '/images/grayscale.png')
   , imageSize = 512
   , canvas = new Canvas(imageSize, imageSize)
   , ctx = canvas.getContext('2d')
@@ -30,7 +30,7 @@ function drawPixel (x, y, color) {
 
 for(var x = 0; x < imageSize; x++) {
   for(var y = 0; y < imageSize; y++) {
-    var color = Math.round(sequence.get()) * 255
+    var color = Math.round(sequence.get() * 255)
     drawPixel(x, y, color)
   }
 }
