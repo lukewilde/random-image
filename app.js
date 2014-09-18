@@ -1,41 +1,39 @@
-var sequenceGenerator = require('./random-sequence.js')
-  , gm = require('gm').subClass({ imageMagick: true })
-  , filename = __dirname + '/images/grayscaled.png'
+var Canvas = require('canvas')
+  , canvas = new Canvas(150, 150)
+  , ctx = canvas.getContext('2d')
+  , fs = require('fs')
+  , sequenceGenerator = require('./random-sequence.js')
+
+var out = fs.createWriteStream(__dirname + '/images/test.png')
+  , imageSize = 256
+  , canvasData = ctx.getImageData(0, 0, imageSize, imageSize)
+  , stream = canvas.pngStream()
   , sequence = sequenceGenerator(1)
-  , imageSize = 512
 
-gm(imageSize, imageSize, '#ffffff')
-  .write(filename, function (err) {
+stream.on('data', function(chunk){
+  out.write(chunk)
+})
 
-    if (err) {
-      console.log(err)
-    }
+stream.on('end', function(){
+  console.log('saved png')
+})
 
-    drawColumn(0)
-  }
-)
 
-function drawColumn (column) {
+function drawPixel (x, y, color) {
+  var index = (x + y * imageSize) * 4
 
-  var graphic = gm(filename)
-
-  for (var j = 0; j < imageSize; j++) {
-    var color = Math.round(sequence.get() * 255)
-      , colorString = 'rgb(' + color + ', ' + color + ', ' + color + ')'
-
-    graphic.drawPoint(column, j).fill(colorString)
-  }
-
-  graphic.write(filename, function(error) {
-    if (error) {
-      console.log(error)
-      return
-    }
-
-    if (column < imageSize) {
-      drawColumn(column + 1)
-    }
-
-    return
-  })
+  canvasData.data[index + 0] = color
+  canvasData.data[index + 1] = color
+  canvasData.data[index + 2] = color
+  canvasData.data[index + 3] = 255
 }
+
+for(var x = 0; x < imageSize; x++) {
+  for(var y = 0; y < imageSize; y++) {
+    var color = Math.round(sequence.get() * 255)
+    drawPixel(x, y, color)
+  }
+}
+
+drawPixel(0, 0, 0)
+ctx.putImageData(canvasData, 0, 0)
