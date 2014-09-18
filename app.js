@@ -35,5 +35,4 @@ for(var x = 0; x < imageSize; x++) {
   }
 }
 
-drawPixel(0, 0, 0)
 ctx.putImageData(canvasData, 0, 0)
